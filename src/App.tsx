@@ -1,8 +1,12 @@
 import { createGlobalStyle } from 'styled-components';
 import reset from 'styled-reset';
 import './App.css';
-import React from 'react';
-import Layout from './containers/Layout';
+import React, { Suspense } from 'react';
+
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import MainPage from './pages/mainPage';
+import AuthGoogle from './pages/auth/google';
+import AuthTest from './pages/auth/test';
 
 const GlobalStyle = createGlobalStyle`
   ${reset}
@@ -35,7 +39,19 @@ function App() {
   return (
     <React.Fragment>
       <GlobalStyle />
-      <Layout>content</Layout>
+      <Router>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/" element={<MainPage />} />
+            <Route path="/auth/google" element={<AuthGoogle />} />
+            <Route path="/auth/test" element={<AuthTest />} />
+            <Route path="/*" element={<MainPage />} />
+          </Routes>
+        </Suspense>
+      </Router>
+
+      {/* {StartWithGoogleButton} */}
+      {/* <button onClick={oauthSignIn}>hihihi</button> */}
     </React.Fragment>
   );
 }
