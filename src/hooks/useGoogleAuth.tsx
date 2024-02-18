@@ -22,7 +22,8 @@ export const useGoogleAuth = () => {
       response_type: 'code',
       // https://www.googleapis.com/auth/userinfo.profile
       // https://www.googleapis.com/auth/userinfo.email
-      scope: 'https://www.googleapis.com/auth/userinfo.profile',
+      scope:
+        'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
 
       include_granted_scopes: 'true',
       state: 'pass-through value',
