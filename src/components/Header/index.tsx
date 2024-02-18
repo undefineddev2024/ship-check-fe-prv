@@ -1,15 +1,17 @@
-import { useState } from 'react';
 import MenuItem from './MenuItem';
 import Styled from './index.styles';
+import useTokenAuth from '../../hooks/useTokenAuth';
+import { useGoogleAuth } from '../../hooks/useGoogleAuth';
 
 function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoggedIn, clearToken } = useTokenAuth();
+  const { oauthSignIn: googleOauthSignin } = useGoogleAuth();
 
   const handleLoginClick = () => {
-    setIsLoggedIn(true);
+    googleOauthSignin();
   };
   const handleLogoutClick = () => {
-    setIsLoggedIn(false);
+    clearToken();
   };
 
   return (
