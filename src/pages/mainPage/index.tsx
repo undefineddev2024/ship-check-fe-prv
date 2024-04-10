@@ -1,13 +1,14 @@
 import Notice from '../../components/Notice';
 import Layout from '../../containers/Layout';
 import Styled from './index.styles';
-import dayjs from 'dayjs';
 import Calendar from '../../components/Calendar';
 import useWeekList from '../../hooks/useWeekList';
 import { useState } from 'react';
 
 function MainPage() {
   const { baseDate, dayNames, setBaseDate, weekList } = useWeekList();
+  const [clickedDate, setClickedDate] = useState<Date>(baseDate);
+  const todayDate = new Date();
 
   return (
     <>
@@ -20,32 +21,20 @@ function MainPage() {
           <Styled.ContentBody>
             <div>
               <Calendar
-                todayDate={new Date()}
-                clickedDate={baseDate}
+                todayDate={todayDate}
+                clickedDate={clickedDate}
                 baseDate={baseDate}
+                reservedDateList={
+                  [
+                    // new Date(),
+                    // new Date('2024-04-12T05:00:00.000+09:00'),
+                  ]
+                }
                 setBaseDate={setBaseDate}
                 dayNames={dayNames}
                 weekList={weekList}
-                // onPrevButtonClick={() => {
-                //   setBaseDate(
-                //     dayjs(baseDate).endOf('week').subtract(1, 'week').toDate(),
-                //   );
-                // }}
-                // onNextButtonClick={() => {
-                //   console.log(baseDate.toISOString());
-                //   console.log(
-                //     dayjs(baseDate)
-                //       .startOf('week')
-                //       .add(1, 'week')
-                //       .toDate()
-                //       .toISOString(),
-                //   );
-                //   setBaseDate(
-                //     dayjs(baseDate).startOf('week').add(1, 'week').toDate(),
-                //   );
-                // }}
                 onDateClick={(date: Date) => {
-                  setBaseDate(date);
+                  setClickedDate(date);
                 }}
               />
             </div>

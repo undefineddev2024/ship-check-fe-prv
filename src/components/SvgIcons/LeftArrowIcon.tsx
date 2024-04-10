@@ -15,8 +15,8 @@ export default function LeftArrowIcon() {
           y2="-1.5"
           transform="matrix(0.707107 -0.707107 -0.707107 -0.707107 0 9.89941)"
           stroke="#B3B3B3"
-          stroke-width="3"
-          stroke-linecap="round"
+          strokeWidth="3"
+          strokeLinecap="round"
         />
         <line
           x1="2.1223"
@@ -24,8 +24,8 @@ export default function LeftArrowIcon() {
           x2="9.90047"
           y2="17.6776"
           stroke="#B3B3B3"
-          stroke-width="3"
-          stroke-linecap="round"
+          strokeWidth="3"
+          strokeLinecap="round"
         />
       </svg>
     </>

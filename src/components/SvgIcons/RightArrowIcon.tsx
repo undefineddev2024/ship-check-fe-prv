@@ -14,8 +14,8 @@ export default function RightArrowIcon() {
           x2="2.10051"
           y2="2.12124"
           stroke="#B3B3B3"
-          stroke-width="3"
-          stroke-linecap="round"
+          strokeWidth="3"
+          strokeLinecap="round"
         />
         <line
           x1="1.5"
@@ -24,8 +24,8 @@ export default function RightArrowIcon() {
           y2="-1.5"
           transform="matrix(-0.707107 0.707107 0.707107 0.707107 11.999 9.89941)"
           stroke="#B3B3B3"
-          stroke-width="3"
-          stroke-linecap="round"
+          strokeWidth="3"
+          strokeLinecap="round"
         />
       </svg>
     </>

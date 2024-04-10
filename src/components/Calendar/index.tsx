@@ -4,9 +4,9 @@ import RightArrowIcon from '../SvgIcons/RightArrowIcon';
 import DateBox from './DateBox';
 import DayBox from './DayBox';
 import Styled from './index.styles';
-import { useState } from 'react';
 
-const DATE_COMPARE_FORMAT = 'YYYYMMDD';
+import { dateToYYYYMMDD } from './util';
+
 type DateValue = {
   date: Date;
   value: number;
@@ -16,6 +16,7 @@ function Calendar({
   setBaseDate,
   todayDate,
   clickedDate,
+  reservedDateList,
   dayNames,
   weekList,
   onDateClick,
@@ -24,6 +25,7 @@ function Calendar({
   setBaseDate: React.Dispatch<React.SetStateAction<Date>>;
   todayDate: Date;
   clickedDate: Date;
+  reservedDateList?: Date[];
   dayNames: string[];
   weekList: DateValue[][];
 
@@ -38,9 +40,6 @@ function Calendar({
     }
     return prev;
   }, 0);
-
-  const baseYYYYMMDD = dayjs(baseDate).format('YYYYMMDD');
-  const todayYYYYMMDD = dayjs().format('YYYYMMDD');
 
   const onPrevButtonClick = () => {
     if (weekListIndex === 0) {
@@ -58,6 +57,8 @@ function Calendar({
   };
 
   const isFirstWeekOfMonth = weekListIndex === 0;
+  const reservedDateYYYYMMDDList =
+    reservedDateList?.map((v) => dateToYYYYMMDD(v)) || [];
 
   return (
     <Styled.Container>
@@ -76,7 +77,7 @@ function Calendar({
           {/** 요일명 출력 */}
           <Styled.FlexHorizontal>
             {dayNames.map((v, i) => (
-              <DayBox dayName={v} />
+              <DayBox dayName={v} key={i} />
             ))}
           </Styled.FlexHorizontal>
           <Styled.FlexHorizontal
@@ -85,17 +86,17 @@ function Calendar({
             {/** 일 출력 */}
             {weekList[weekListIndex].map((v) => {
               const date = v.date;
-              const dateYYYYMMDD = dayjs(v.date).format(DATE_COMPARE_FORMAT);
+              const dateYYYYMMDD = dateToYYYYMMDD(date);
               return (
                 <DateBox
                   date={date}
                   onClick={() => {
                     onDateClick(date);
                   }}
-                  isClicked={dateYYYYMMDD === baseYYYYMMDD}
-                  isToday={dateYYYYMMDD === todayYYYYMMDD}
-                  isDisabled={dateYYYYMMDD < todayYYYYMMDD}
-                  isReserved={false}
+                  isClicked={dateYYYYMMDD === dateToYYYYMMDD(clickedDate)}
+                  isToday={dateYYYYMMDD === dateToYYYYMMDD(todayDate)}
+                  isDisabled={dateYYYYMMDD < dateToYYYYMMDD(todayDate)}
+                  isReserved={reservedDateYYYYMMDDList.includes(dateYYYYMMDD)}
                   key={v.date.toString()}
                 />
               );
