@@ -13,13 +13,13 @@ function MainPage() {
   return (
     <>
       <Layout>
-        <Styled.MainPageContainer>
-          <Styled.ContentHeader>
-            <Notice />
-          </Styled.ContentHeader>
+        <Styled.Container>
+          <Styled.MainPageContainer>
+            <Styled.ContentHeader>
+              <Notice />
+            </Styled.ContentHeader>
 
-          <Styled.ContentBody>
-            <div>
+            <Styled.ContentBody>
               <Calendar
                 todayDate={todayDate}
                 clickedDate={clickedDate}
@@ -37,9 +37,9 @@ function MainPage() {
                   setClickedDate(date);
                 }}
               />
-            </div>
-          </Styled.ContentBody>
-        </Styled.MainPageContainer>
+            </Styled.ContentBody>
+          </Styled.MainPageContainer>
+        </Styled.Container>
       </Layout>
     </>
   );
