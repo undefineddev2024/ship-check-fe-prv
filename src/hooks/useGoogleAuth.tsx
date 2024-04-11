@@ -1,6 +1,7 @@
-const GOOGLE_CLIENT_ID =
-  '257822080393-dtdml0t4edv2kodbgd32dp58eqimsl0k.apps.googleusercontent.com';
-const GOOGLE_REDIRECT_URI = 'http://localhost:3000/auth/google';
+import { getGoogleClientId, getGoogleRedirectURI } from '../util/config';
+
+const GOOGLE_CLIENT_ID = getGoogleClientId();
+const GOOGLE_REDIRECT_URI = getGoogleRedirectURI();
 
 export const useGoogleAuth = () => {
   /*
