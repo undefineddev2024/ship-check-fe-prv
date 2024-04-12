@@ -42,8 +42,8 @@ function Footer() {
                 <dt className="bold">모임원</dt>
 
                 <dd className="member">
-                  {members.map((member) => (
-                    <Member {...member} />
+                  {members.map((member, i) => (
+                    <Member {...member} key={i} />
                   ))}
                 </dd>
               </div>
