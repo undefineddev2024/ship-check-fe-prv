@@ -1,9 +1,11 @@
 import Notice from '../../components/Notice';
 import Layout from '../../containers/Layout';
+import Reservation from '../../components/Reservation';
 import Styled from './index.styles';
 import Calendar from '../../components/Calendar';
 import useWeekList from '../../hooks/useWeekList';
 import { useState } from 'react';
+import { UserProvider } from '../../context/userContext';
 
 function MainPage() {
   const { baseDate, dayNames, setBaseDate, weekList } = useWeekList();
@@ -11,7 +13,7 @@ function MainPage() {
   const todayDate = new Date();
 
   return (
-    <>
+    <UserProvider>
       <Layout>
         <Styled.Container>
           <Styled.MainPageContainer>
@@ -24,12 +26,10 @@ function MainPage() {
                 todayDate={todayDate}
                 clickedDate={clickedDate}
                 baseDate={baseDate}
-                reservedDateList={
-                  [
-                    // new Date(),
-                    // new Date('2024-04-12T05:00:00.000+09:00'),
-                  ]
-                }
+                reservedDateList={[
+                  new Date(),
+                  new Date('2024-04-12T05:00:00.000+09:00'),
+                ]}
                 setBaseDate={setBaseDate}
                 dayNames={dayNames}
                 weekList={weekList}
@@ -37,11 +37,13 @@ function MainPage() {
                   setClickedDate(date);
                 }}
               />
+
+              <Reservation currentDate={clickedDate} />
             </Styled.ContentBody>
           </Styled.MainPageContainer>
         </Styled.Container>
       </Layout>
-    </>
+    </UserProvider>
   );
 }
 
