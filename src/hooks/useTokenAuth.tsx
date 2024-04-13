@@ -1,10 +1,19 @@
 import { useState } from 'react';
+import { User } from '../types';
+
+const extractUserFromAccessToken = (accessToken: string | undefined) => {
+  if (!accessToken) {
+    return null;
+  }
+  const decodedPayload = atob(accessToken.split('.')[1]);
+  return JSON.parse(decodedPayload) as User;
+};
 
 type TokenPair = { accessToken: string; refreshToken: string };
 const STORAGE_KEY_JWT = 'bearerToken';
 
-const getToken = () => {
-  return JSON.parse(localStorage.getItem(STORAGE_KEY_JWT)) as TokenPair;
+const getToken = (): TokenPair | undefined => {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY_JWT));
 };
 
 const useTokenAuth = () => {
@@ -22,7 +31,13 @@ const useTokenAuth = () => {
 
   const isLoggedIn = tokenPair || getToken();
 
-  return { storeToken, clearToken, isLoggedIn, tokenPair };
+  return {
+    storeToken,
+    clearToken,
+    isLoggedIn,
+    tokenPair,
+    user: extractUserFromAccessToken(tokenPair?.accessToken),
+  };
 };
 
 export default useTokenAuth;
