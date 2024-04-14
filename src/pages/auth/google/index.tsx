@@ -1,10 +1,8 @@
-import axios from 'axios';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import useTokenAuth from '../../../hooks/useTokenAuth';
 import { useEffect } from 'react';
-import { getBaseApiUrl } from '../../../util/config';
-
-const GOOGLE_LOGIN_URL = '/auth/login/google';
+import { useMutation } from '@tanstack/react-query';
+import { RAW_QUERY } from '../../../api/query';
 
 export default function AuthGoogle() {
   const [searchParams] = useSearchParams();
@@ -12,18 +10,17 @@ export default function AuthGoogle() {
   const { storeToken } = useTokenAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    axios
-      .post(`${getBaseApiUrl()}${GOOGLE_LOGIN_URL}`, { authorizationCode })
-      .then((res) => {
-        const tokenPair: { accessToken: string; refreshToken: string } =
-          res.data;
+  const { mutate } = useMutation({
+    mutationFn: RAW_QUERY.getTokenPairWithGoogleAuth,
+    onSuccess: (data) => {
+      storeToken(data.data);
+      navigate('/');
+    },
+  });
 
-        storeToken(tokenPair);
-        navigate('/');
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useEffect(() => {
+    mutate({ authorizationCode });
+  }, [authorizationCode, mutate]);
 
   return <></>;
 }

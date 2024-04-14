@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User } from '../types';
+import { TokenPair, User } from '../types';
 
 const extractUserFromAccessToken = (accessToken: string | undefined) => {
   if (!accessToken) {
@@ -9,7 +9,6 @@ const extractUserFromAccessToken = (accessToken: string | undefined) => {
   return JSON.parse(decodedPayload) as User;
 };
 
-type TokenPair = { accessToken: string; refreshToken: string };
 const STORAGE_KEY_JWT = 'bearerToken';
 
 const getToken = (): TokenPair | undefined => {
