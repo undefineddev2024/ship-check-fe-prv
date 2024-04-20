@@ -15,7 +15,7 @@ const AuthTest = () => {
     <>
       <h2>인증이 잘 되어있어요</h2>
       <div>{JSON.stringify(user)}</div>
-      {data && <div>{JSON.stringify(data.data)}</div>}
+      {data && <div>{JSON.stringify(data)}</div>}
     </>
   );
 };

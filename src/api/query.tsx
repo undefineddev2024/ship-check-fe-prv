@@ -7,20 +7,25 @@ import {
 } from './types';
 import { makeAuthorization } from './utils';
 
-function getTokenPairWithGoogleAuth({
+async function getTokenPairWithGoogleAuth({
   authorizationCode,
 }: GetTokenPairWithGoogleAuthReuqest) {
-  return client.post<GetTokenPairWithGoogleAuthResponse>('/auth/login/google', {
-    authorizationCode,
-  });
+  const result = await client.post<GetTokenPairWithGoogleAuthResponse>(
+    '/auth/login/google',
+    {
+      authorizationCode,
+    },
+  );
+  return result.data;
 }
 
-function getAllUsers({ accessToken, refreshToken }: GetAllUserRequest) {
-  return client.get<GetAllUserResponse>('/user', {
+async function getAllUsers({ accessToken, refreshToken }: GetAllUserRequest) {
+  const result = await client.get<GetAllUserResponse>('/user', {
     headers: {
       ...makeAuthorization({ accessToken, refreshToken }),
     },
   });
+  return result.data;
 }
 
 export const RAW_QUERY = {

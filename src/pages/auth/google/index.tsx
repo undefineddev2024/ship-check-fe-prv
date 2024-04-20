@@ -13,7 +13,7 @@ export default function AuthGoogle() {
   const { mutate } = useMutation({
     mutationFn: RAW_QUERY.getTokenPairWithGoogleAuth,
     onSuccess: (data) => {
-      storeToken(data.data);
+      storeToken(data);
       navigate('/');
     },
   });
