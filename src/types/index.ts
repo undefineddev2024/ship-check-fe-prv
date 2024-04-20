@@ -38,3 +38,5 @@ export interface Seat {
   reservation?: Reservation;
   items: Item[];
 }
+
+export type TokenPair = { accessToken: string; refreshToken: string };

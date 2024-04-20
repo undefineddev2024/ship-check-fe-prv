@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainPage from './pages/mainPage';
 import AuthGoogle from './pages/auth/google';
 import AuthTest from './pages/auth/test';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const GlobalStyle = createGlobalStyle`
   ${reset}
@@ -31,27 +32,34 @@ const GlobalStyle = createGlobalStyle`
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
   }
-
 `;
+
+// Create a client
+const queryClient = new QueryClient();
 
 function App() {
   return (
     <React.Fragment>
-      <GlobalStyle />
-      <Router>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Routes>
-            <Route path="/" element={<MainPage />} />
-            <Route path="/auth/google" element={<AuthGoogle />} />
-            <Route path="/auth/test" element={<AuthTest />} />
-            <Route path="/*" element={<MainPage />} />
-          </Routes>
-        </Suspense>
-      </Router>
-
-      {/* {StartWithGoogleButton} */}
-      {/* <button onClick={oauthSignIn}>hihihi</button> */}
+      <Providers>
+        <GlobalStyle />
+        <Router>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+              <Route path="/" element={<MainPage />} />
+              <Route path="/auth/google" element={<AuthGoogle />} />
+              <Route path="/auth/test" element={<AuthTest />} />
+              <Route path="/*" element={<MainPage />} />
+            </Routes>
+          </Suspense>
+        </Router>
+      </Providers>
     </React.Fragment>
+  );
+}
+
+function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 }
 
