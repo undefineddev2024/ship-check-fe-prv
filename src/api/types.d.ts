@@ -1,6 +1,6 @@
 import { TokenPair, User } from '../types';
 
-type GetTokenPairWithGoogleAuthReuqest = {
+type GetTokenPairWithGoogleAuthRequest = {
   authorizationCode: string;
 };
 
@@ -13,7 +13,7 @@ type GetAllUserRequest = {} & TokenPair;
 type GetAllUserResponse = Array<Pick<User, 'id' | 'email'>>;
 
 export {
-  GetTokenPairWithGoogleAuthReuqest,
+  GetTokenPairWithGoogleAuthRequest,
   GetTokenPairWithGoogleAuthResponse,
   GetAllUserRequest,
   GetAllUserResponse,
