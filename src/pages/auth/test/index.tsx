@@ -7,7 +7,7 @@ const AuthTest = () => {
   const { tokenPair, user } = useTokenAuth();
 
   const { data } = useQuery({
-    queryKey: ['todos'],
+    queryKey: ['users'],
     queryFn: () => RAW_QUERY.getAllUsers(tokenPair),
   });
 
