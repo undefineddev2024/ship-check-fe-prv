@@ -1,7 +1,7 @@
 import client from './client';
 import {
   GetTokenPairWithGoogleAuthResponse,
-  GetTokenPairWithGoogleAuthReuqest,
+  GetTokenPairWithGoogleAuthRequest,
   GetAllUserRequest,
   GetAllUserResponse,
 } from './types';
@@ -9,7 +9,7 @@ import { makeAuthorization } from './utils';
 
 async function getTokenPairWithGoogleAuth({
   authorizationCode,
-}: GetTokenPairWithGoogleAuthReuqest) {
+}: GetTokenPairWithGoogleAuthRequest) {
   const result = await client.post<GetTokenPairWithGoogleAuthResponse>(
     '/auth/login/google',
     {
