@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { TokenPair, User } from '../types';
 
 const extractUserFromAccessToken = (accessToken: string | undefined) => {
@@ -15,20 +15,31 @@ const getToken = (): TokenPair | undefined => {
   return JSON.parse(localStorage.getItem(STORAGE_KEY_JWT));
 };
 
-const useTokenAuth = () => {
-  const [tokenPair, setTokenPair] = useState<TokenPair | undefined>(getToken());
+/** #FIXME 로그아웃시 isLoggedIn이 제대로 false 처리가 안됨. Provider나 recoil로 변경해야할듯 */
+export const useTokenAuth = () => {
+  const [tokenPair, setTokenPair] = useState<TokenPair>();
 
-  const storeToken = (tokenPair: TokenPair) => {
-    localStorage.setItem(STORAGE_KEY_JWT, JSON.stringify(tokenPair));
-    setTokenPair(tokenPair);
+  useEffect(() => {
+    const token = getToken();
+    if (!tokenPair && token) {
+      setTokenPair(structuredClone(token));
+    }
+  }, [tokenPair]);
+
+  const storeToken = (token: TokenPair) => {
+    setTokenPair(structuredClone(token));
+    localStorage.setItem(STORAGE_KEY_JWT, JSON.stringify(token));
   };
 
   const clearToken = () => {
     localStorage.removeItem(STORAGE_KEY_JWT);
     setTokenPair(undefined);
+    window.location.reload(); //  #FIXME 로그아웃시 isLoggedIn이 제대로 false 처리가 안됨. Provider나 recoil로 변경해야할듯 > 이 이슈 때문에 임시로 새로고침을 한다
   };
 
-  const isLoggedIn = tokenPair || getToken();
+  const isLoggedIn = useMemo(() => {
+    return !!tokenPair;
+  }, [tokenPair]);
 
   return {
     storeToken,
@@ -38,5 +49,3 @@ const useTokenAuth = () => {
     user: extractUserFromAccessToken(tokenPair?.accessToken),
   };
 };
-
-export default useTokenAuth;

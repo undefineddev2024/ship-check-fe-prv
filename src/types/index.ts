@@ -1,12 +1,27 @@
+export interface Team {
+  id: number;
+  name: string;
+  users: User[];
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date;
+}
+
 /**
  * 사용자 정보
  */
 export interface User {
   id: number;
-  email?: string;
+  email: string;
   name: string;
-  photo?: string;
-  team: 'backend' | 'frontend' | 'design' | 'etc';
+  photo: string;
+  reservations: Reservation[];
+  team?: Team;
+  teamId?: number;
+  fixedSeat?: Seat;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date;
 }
 
 /**
@@ -15,8 +30,12 @@ export interface User {
 export interface Reservation {
   id: number;
   user: User;
-  seatId?: number;
-  createdAt?: Date;
+  userId: number;
+  seat: Seat;
+  seatId: number;
+  reservedAt: string;
+  createdAt: Date;
+  deletedAt?: Date;
 }
 
 /**
@@ -34,9 +53,10 @@ export interface Item {
 export interface Seat {
   id: number;
   deskNo: number;
+  reservations: Reservation[];
   fixedUser?: User;
-  reservation?: Reservation;
-  items: Item[];
+  fixedUserId?: number;
+  items?: Item[];
 }
 
 export type TokenPair = { accessToken: string; refreshToken: string };

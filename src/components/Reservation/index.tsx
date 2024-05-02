@@ -1,73 +1,83 @@
-import { useEffect, useState } from 'react';
-import dayjs from 'dayjs';
-import Styled from './index.styles';
+import { Reservation as ReservationType, Seat, User } from '../../types';
 import Desk from './Desk';
-import { Seat } from '../../types';
-import client from '../../api/client';
+import Styled from './index.styles';
 
-function Reservation(props: { currentDate: Date }) {
-  const { currentDate } = props;
-  const [seatList, setSeatList] = useState<Seat[]>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-
-      try {
-        const response = await client.get<Seat[]>(
-          'http://localhost:3001/reservation',
-        );
-        setSeatList(response.data);
-      } catch (e) {
-        console.log(e);
-      }
-      setLoading(false);
-    };
-    fetchData();
-  }, []);
-
-  if (!seatList || loading) {
-    return (
-      <Styled.Container>
-        <Styled.SeatList>...로딩중...</Styled.SeatList>
-      </Styled.Container>
-    );
-  }
-
+function Reservation({
+  currentDate,
+  seatList,
+  reservationList,
+  myself,
+  createReservation,
+  cancelReservation,
+}: {
+  currentDate: Date;
+  seatList: Seat[];
+  reservationList: ReservationType[];
+  myself: User;
+  createReservation: (seatId: number) => void;
+  cancelReservation: (seatId: number) => void;
+}) {
   return (
     <Styled.Container>
       <Styled.SeatList>
         <ul className="first">
-          <Desk {...seatList.find((e) => e.deskNo === 1)} />
-          <Desk {...seatList.find((e) => e.deskNo === 2)} />
-          <Desk {...seatList.find((e) => e.deskNo === 3)} />
-          <Desk {...seatList.find((e) => e.deskNo === 4)} />
-          <Desk {...seatList.find((e) => e.deskNo === 5)} />
+          {[1, 2, 3, 4, 5].map((deskNo, i) => (
+            <Desk
+              seat={seatList.find((e) => e.deskNo === deskNo)}
+              reservation={reservationList.find(
+                (v) => v.seat.deskNo === deskNo,
+              )}
+              myself={myself}
+              createReservation={createReservation}
+              cancelReservation={cancelReservation}
+              key={i}
+            />
+          ))}
         </ul>
 
         <ul className="second">
-          <Desk {...seatList.find((e) => e.deskNo === 6)} />
-          <Desk {...seatList.find((e) => e.deskNo === 7)} />
-          <Desk {...seatList.find((e) => e.deskNo === 8)} />
-          <Desk {...seatList.find((e) => e.deskNo === 9)} />
-          <Desk {...seatList.find((e) => e.deskNo === 10)} />
+          {[6, 7, 8, 9, 10].map((deskNo, i) => (
+            <Desk
+              seat={seatList.find((e) => e.deskNo === deskNo)}
+              reservation={reservationList.find(
+                (v) => v.seat.deskNo === deskNo,
+              )}
+              myself={myself}
+              createReservation={createReservation}
+              cancelReservation={cancelReservation}
+              key={i}
+            />
+          ))}
         </ul>
 
         <ul className="third">
-          <Desk {...seatList.find((e) => e.deskNo === 11)} />
-          <Desk {...seatList.find((e) => e.deskNo === 12)} />
-          <Desk {...seatList.find((e) => e.deskNo === 13)} />
-          <Desk {...seatList.find((e) => e.deskNo === 14)} />
-          <Desk {...seatList.find((e) => e.deskNo === 15)} />
+          {[11, 12, 13, 14, 15].map((deskNo, i) => (
+            <Desk
+              seat={seatList.find((e) => e.deskNo === deskNo)}
+              reservation={reservationList.find(
+                (v) => v.seat.deskNo === deskNo,
+              )}
+              myself={myself}
+              createReservation={createReservation}
+              cancelReservation={cancelReservation}
+              key={i}
+            />
+          ))}
         </ul>
 
         <ul className="fourth">
-          <Desk {...seatList.find((e) => e.deskNo === 16)} />
-          <Desk {...seatList.find((e) => e.deskNo === 17)} />
-          <Desk {...seatList.find((e) => e.deskNo === 18)} />
-          <Desk {...seatList.find((e) => e.deskNo === 19)} />
-          <Desk {...seatList.find((e) => e.deskNo === 20)} />
+          {[16, 17, 18, 19, 20].map((deskNo, i) => (
+            <Desk
+              seat={seatList.find((e) => e.deskNo === deskNo)}
+              reservation={reservationList.find(
+                (v) => v.seat.deskNo === deskNo,
+              )}
+              myself={myself}
+              createReservation={createReservation}
+              cancelReservation={cancelReservation}
+              key={i}
+            />
+          ))}
         </ul>
       </Styled.SeatList>
     </Styled.Container>

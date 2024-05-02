@@ -8,6 +8,7 @@ import MainPage from './pages/mainPage';
 import AuthGoogle from './pages/auth/google';
 import AuthTest from './pages/auth/test';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { UserProvider } from './context/userContext';
 
 const GlobalStyle = createGlobalStyle`
   ${reset}
@@ -59,7 +60,9 @@ function App() {
 
 function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <UserProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </UserProvider>
   );
 }
 
