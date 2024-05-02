@@ -1,6 +1,6 @@
 import MenuItem from './MenuItem';
 import Styled from './index.styles';
-import useTokenAuth from '../../hooks/useTokenAuth';
+import { useTokenAuth } from '../../hooks/useTokenAuth';
 import { useGoogleAuth } from '../../hooks/useGoogleAuth';
 
 function Header() {

@@ -1,5 +1,5 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import useTokenAuth from '../../../hooks/useTokenAuth';
+import { useTokenAuth } from '../../../hooks/useTokenAuth';
 import { useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { RAW_QUERY } from '../../../api/query';

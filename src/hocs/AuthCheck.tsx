@@ -1,5 +1,5 @@
 import React from 'react';
-import useTokenAuth from '../hooks/useTokenAuth';
+import { useTokenAuth } from '../hooks/useTokenAuth';
 
 const AuthCheck = (TargetComponent: React.ComponentType<unknown>) => {
   const AuthenticateCheck = () => {
