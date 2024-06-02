@@ -24,5 +24,5 @@ jobs:
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
-          git remote add destination https://undefineddev2024:${GH_PAT}@github.com/undefineddev2024/ship-check-fe-prv.git
+          git remote add destination https://undefineddev2024:${{ secrets.GH_PAT }}@github.com/undefineddev2024/ship-check-fe-prv.git
           git push destination main --force
