@@ -1,0 +1,28 @@
+name: Push to another repository
+
+on:
+  push:
+    branches:
+      - chore/push-another-repo
+
+jobs:
+  push_to_another_repo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source repository
+        uses: actions/checkout@v3
+        with:
+          ref: chore/push-another-repo
+
+      - name: Set up Git configuration
+        run: |
+          git config --global user.name "undefineddev2024"
+          git config --global user.email "undefineddev2024@gmail.com"
+
+      - name: Push to destination repository
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          git remote add destination https://undefineddev2024:${GH_PAT}@github.com/undefineddev2024/ship-check-fe-prv.git
+          git push destination main:main
