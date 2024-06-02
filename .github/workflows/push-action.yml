@@ -8,8 +8,6 @@ on:
 jobs:
   push_to_another_repo:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout source repository
         uses: actions/checkout@v4
@@ -25,5 +23,5 @@ jobs:
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
-          git remote add destination https://x-access-token:${GH_PAT}@github.com/undefineddev2024/ship-check-fe-prv.git
+          git remote add destination https://x-access-token:${{ secrets.GH_PAT }}@github.com/undefineddev2024/ship-check-fe-prv.git
           git push -u destination +chore/push-another-repo:main
