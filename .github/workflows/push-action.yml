@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - chore/push-another-repo
-
+permissions:
+  contents: write
 jobs:
   push_to_another_repo:
     runs-on: ubuntu-latest
