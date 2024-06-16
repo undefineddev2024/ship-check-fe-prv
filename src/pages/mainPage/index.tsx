@@ -1,7 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { useState } from 'react';
-import { RAW_QUERY } from '../../api/query';
 import Calendar from '../../components/Calendar';
 import Notice from '../../components/Notice';
 import Reservation from '../../components/Reservation';
@@ -9,61 +6,15 @@ import Layout from '../../containers/Layout';
 import { useTokenAuth } from '../../hooks/useTokenAuth';
 import useWeekList from '../../hooks/useWeekList';
 import Styled from './index.styles';
+import { useGetUser } from '../../api/query';
 
 function MainPage() {
   const { baseDate, dayNames, setBaseDate, weekList } = useWeekList();
   const [clickedDate, setClickedDate] = useState<Date>(baseDate);
   const todayDate = new Date();
-  const clickedDateString = dayjs(clickedDate).format('YYYY-MM-DD');
 
-  const { tokenPair, user } = useTokenAuth();
-
-  const { data: getAllSeatResponse } = useQuery({
-    queryKey: ['seats'],
-    queryFn: () => RAW_QUERY.getAllSeats(tokenPair),
-    enabled: !!tokenPair,
-  });
-
-  const { data: getReservationListResponse, refetch: refetchReservationList } =
-    useQuery({
-      queryKey: ['reservations', clickedDateString],
-      queryFn: () =>
-        RAW_QUERY.getReservationList({
-          ...tokenPair,
-          reservedAt: clickedDateString,
-        }),
-      enabled: !!tokenPair && !!getAllSeatResponse,
-    });
-
-  const { mutate: createReservationMutate } = useMutation({
-    mutationFn: RAW_QUERY.createReservation,
-    onSuccess: (data) => {
-      refetchReservationList();
-    },
-  });
-
-  const { mutate: cancelReservationMutate } = useMutation({
-    mutationFn: RAW_QUERY.cancelReservation,
-    onSuccess: (data) => {
-      refetchReservationList();
-    },
-  });
-
-  const createReservation = (seatId: number) => {
-    createReservationMutate({
-      ...tokenPair,
-      reservedAt: clickedDateString,
-      seatId,
-    });
-  };
-
-  const cancelReservation = (seatId: number) => {
-    cancelReservationMutate({
-      ...tokenPair,
-      reservedAt: clickedDateString,
-      seatId,
-    });
-  };
+  const { isLoggedIn } = useTokenAuth();
+  const { data: myself } = useGetUser();
 
   return (
     <Layout>
@@ -90,15 +41,8 @@ function MainPage() {
               }}
             />
 
-            {getReservationListResponse && (
-              <Reservation
-                currentDate={clickedDate}
-                seatList={getAllSeatResponse.list}
-                reservationList={getReservationListResponse.list}
-                myself={user}
-                createReservation={createReservation}
-                cancelReservation={cancelReservation}
-              />
+            {isLoggedIn && (
+              <Reservation currentDate={clickedDate} myself={myself} />
             )}
           </Styled.ContentBody>
         </Styled.MainPageContainer>

@@ -1,85 +1,61 @@
-import { Reservation as ReservationType, Seat, User } from '../../types';
 import Desk from './Desk';
 import Styled from './index.styles';
+import dayjs from 'dayjs';
+import {
+  useCancelReservation,
+  useCreateReservation,
+  useGetAllReservation,
+  useGetAllSeat,
+} from '../../api/query';
+import { User } from '../../types';
 
 function Reservation({
   currentDate,
-  seatList,
-  reservationList,
   myself,
-  createReservation,
-  cancelReservation,
 }: {
   currentDate: Date;
-  seatList: Seat[];
-  reservationList: ReservationType[];
   myself: User;
-  createReservation: (seatId: number) => void;
-  cancelReservation: (seatId: number) => void;
 }) {
+  const clickedDateString = dayjs(currentDate).format('YYYY-MM-DD');
+
+  const { list: seatList = [] } = useGetAllSeat() || {};
+  const { list: reservationList = [] } =
+    useGetAllReservation({
+      reservedAt: clickedDateString,
+    }) || {};
+
+  const { mutate: createReservationMutate } = useCreateReservation();
+  const { mutate: cancelReservationMutate } = useCancelReservation();
+
+  const handleCreateReservation = (seatId: number) =>
+    createReservationMutate({ seatId, reservedAt: clickedDateString });
+  const handleCancelReservation = (seatId: number) =>
+    cancelReservationMutate({ seatId, reservedAt: clickedDateString });
+
+  const renderDesk = (deskNo: number, i: number) => {
+    const seat = seatList && seatList.find((e) => e.deskNo === deskNo);
+    const reservation =
+      reservationList && reservationList.find((v) => v.seat.deskNo === deskNo);
+
+    return (
+      <Desk
+        currentDate={clickedDateString}
+        seat={seat}
+        reservation={reservation}
+        myself={myself}
+        createReservation={seat ? handleCreateReservation : () => {}}
+        cancelReservation={seat ? handleCancelReservation : () => {}}
+        key={i}
+      />
+    );
+  };
   return (
     <Styled.Container>
-      <Styled.SeatList>
-        <ul className="first">
-          {[1, 2, 3, 4, 5].map((deskNo, i) => (
-            <Desk
-              seat={seatList.find((e) => e.deskNo === deskNo)}
-              reservation={reservationList.find(
-                (v) => v.seat.deskNo === deskNo,
-              )}
-              myself={myself}
-              createReservation={createReservation}
-              cancelReservation={cancelReservation}
-              key={i}
-            />
-          ))}
-        </ul>
-
-        <ul className="second">
-          {[6, 7, 8, 9, 10].map((deskNo, i) => (
-            <Desk
-              seat={seatList.find((e) => e.deskNo === deskNo)}
-              reservation={reservationList.find(
-                (v) => v.seat.deskNo === deskNo,
-              )}
-              myself={myself}
-              createReservation={createReservation}
-              cancelReservation={cancelReservation}
-              key={i}
-            />
-          ))}
-        </ul>
-
-        <ul className="third">
-          {[11, 12, 13, 14, 15].map((deskNo, i) => (
-            <Desk
-              seat={seatList.find((e) => e.deskNo === deskNo)}
-              reservation={reservationList.find(
-                (v) => v.seat.deskNo === deskNo,
-              )}
-              myself={myself}
-              createReservation={createReservation}
-              cancelReservation={cancelReservation}
-              key={i}
-            />
-          ))}
-        </ul>
-
-        <ul className="fourth">
-          {[16, 17, 18, 19, 20].map((deskNo, i) => (
-            <Desk
-              seat={seatList.find((e) => e.deskNo === deskNo)}
-              reservation={reservationList.find(
-                (v) => v.seat.deskNo === deskNo,
-              )}
-              myself={myself}
-              createReservation={createReservation}
-              cancelReservation={cancelReservation}
-              key={i}
-            />
-          ))}
-        </ul>
-      </Styled.SeatList>
+      <ul className="seat-list">
+        {[...Array(20)]
+          .map((_, i) => i + 1) // 1 ~ 20 까지의 배열
+          .map((deskNo, i) => renderDesk(deskNo, i))}
+      </ul>
     </Styled.Container>
   );
 }
