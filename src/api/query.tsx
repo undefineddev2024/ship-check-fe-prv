@@ -1,105 +1,81 @@
-import client from './client';
 import {
   GetTokenPairWithGoogleAuthResponse,
   GetTokenPairWithGoogleAuthRequest,
-  GetAllUserRequest,
-  GetAllUserResponse,
-  GetAllSeatRequest,
+  GetUserResponse,
   GetAllSeatResponse,
   CreateReservationRequest,
   CreateReservationResponse,
-  GetReservationListRequest,
   GetReservationListResponse,
   CancelReservationRequest,
 } from './interfaces';
-import { makeAuthorization } from './utils';
+import useAppQuery from '../hooks/useAppQuery';
+import useAppMutation from '../hooks/useAppMutation';
 
-async function getTokenPairWithGoogleAuth({
-  authorizationCode,
-}: GetTokenPairWithGoogleAuthRequest) {
-  const result = await client.post<GetTokenPairWithGoogleAuthResponse>(
-    '/auth/login/google',
-    {
-      authorizationCode,
-    },
-  );
-  return result.data;
-}
-
-async function getAllUsers({ accessToken, refreshToken }: GetAllUserRequest) {
-  const result = await client.get<GetAllUserResponse>('/user', {
-    headers: {
-      ...makeAuthorization({ accessToken, refreshToken }),
-    },
+function useGetAllSeat(): GetAllSeatResponse {
+  const { data } = useAppQuery<GetAllSeatResponse>({
+    queryKey: ['seats'],
+    requestOptions: { method: 'GET', path: '/seat' },
   });
-  return result.data;
+  return data;
 }
 
-async function getAllSeats({ accessToken, refreshToken }: GetAllSeatRequest) {
-  const result = await client.get<GetAllSeatResponse>('/seat', {
-    headers: {
-      ...makeAuthorization({ accessToken, refreshToken }),
-    },
+function useGetUser() {
+  return useAppQuery<GetUserResponse>({
+    queryKey: ['users'],
+    requestOptions: { method: 'GET', path: '/user/detail' },
   });
-  return result.data;
 }
 
-async function createReservation({
-  accessToken,
-  refreshToken,
-  ...rest
-}: CreateReservationRequest) {
-  const result = await client.post<CreateReservationResponse>(
-    '/reservation',
-    {
-      ...rest,
-    },
-    {
-      headers: {
-        ...makeAuthorization({ accessToken, refreshToken }),
-      },
-    },
-  );
-  return result.data;
-}
-
-async function getReservationList({
-  accessToken,
-  refreshToken,
+function useGetAllReservation({
   reservedAt,
-}: GetReservationListRequest & { reservedAt: string }) {
-  const result = await client.get<GetReservationListResponse>(
-    `/reservation/${reservedAt}`,
-    {
-      headers: {
-        ...makeAuthorization({ accessToken, refreshToken }),
-      },
-    },
-  );
-  return result.data;
-}
-
-async function cancelReservation({
-  accessToken,
-  refreshToken,
-  ...rest
-}: CancelReservationRequest) {
-  const result = await client.delete('/reservation', {
-    data: {
-      ...rest,
-    },
-    headers: {
-      ...makeAuthorization({ accessToken, refreshToken }),
-    },
+}: {
+  reservedAt: string;
+}): GetReservationListResponse {
+  const { data } = useAppQuery<GetReservationListResponse>({
+    queryKey: ['reservations', reservedAt],
+    requestOptions: { method: 'GET', path: `/reservation/${reservedAt}` },
   });
-  return result;
+  return data;
 }
 
-export const RAW_QUERY = {
-  getTokenPairWithGoogleAuth,
-  getAllUsers,
-  getAllSeats,
-  createReservation,
-  getReservationList,
-  cancelReservation,
+function useGetTokenPairWithGoogleAuth({
+  onSuccess,
+}: {
+  onSuccess?: (data: GetTokenPairWithGoogleAuthResponse) => void;
+}) {
+  const mutate = useAppMutation<
+    GetTokenPairWithGoogleAuthRequest,
+    GetTokenPairWithGoogleAuthResponse
+  >({
+    requestOptions: {
+      method: 'POST',
+      path: '/auth/login/google',
+    },
+    onSuccess: onSuccess,
+  });
+
+  return mutate;
+}
+
+function useCreateReservation() {
+  return useAppMutation<CreateReservationRequest, CreateReservationResponse>({
+    mutationKey: ['reservations'],
+    requestOptions: { method: 'POST', path: '/reservation' },
+  });
+}
+
+function useCancelReservation() {
+  return useAppMutation<CancelReservationRequest, void>({
+    mutationKey: ['reservations'],
+    requestOptions: { method: 'DELETE', path: '/reservation' },
+  });
+}
+
+export {
+  useGetAllSeat,
+  useGetUser,
+  useGetAllReservation,
+  useGetTokenPairWithGoogleAuth,
+  useCreateReservation,
+  useCancelReservation,
 };
