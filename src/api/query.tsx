@@ -19,10 +19,11 @@ function useGetAllSeat(): GetAllSeatResponse {
   return data;
 }
 
-function useGetUser() {
+function useGetUser({ enabled }: { enabled?: boolean }) {
   return useAppQuery<GetUserResponse>({
     queryKey: ['users'],
     requestOptions: { method: 'GET', path: '/user/detail' },
+    enabled,
   });
 }
 
@@ -57,17 +58,19 @@ function useGetTokenPairWithGoogleAuth({
   return mutate;
 }
 
-function useCreateReservation() {
+function useCreateReservation({ onSuccess }: { onSuccess?: () => void }) {
   return useAppMutation<CreateReservationRequest, CreateReservationResponse>({
     mutationKey: ['reservations'],
     requestOptions: { method: 'POST', path: '/reservation' },
+    onSuccess,
   });
 }
 
-function useCancelReservation() {
+function useCancelReservation({ onSuccess }: { onSuccess?: () => void }) {
   return useAppMutation<CancelReservationRequest, void>({
     mutationKey: ['reservations'],
     requestOptions: { method: 'DELETE', path: '/reservation' },
+    onSuccess,
   });
 }
 

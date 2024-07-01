@@ -7,7 +7,9 @@ import { useGetUser } from '../../api/query';
 function Header() {
   const { isLoggedIn, clearToken } = useTokenAuth();
   const { oauthSignIn: googleOauthSignin } = useGoogleAuth();
-  const { data: user } = useGetUser();
+  const { data: user } = useGetUser({
+    enabled: !!isLoggedIn,
+  });
 
   const handleLoginClick = () => {
     googleOauthSignin();
@@ -27,7 +29,7 @@ function Header() {
         </Styled.Logo>
 
         <div className="right-container">
-          {user && <Styled.ProfileImage user={user} />}
+          {isLoggedIn && user && <Styled.ProfileImage user={user} />}
 
           <MenuItem
             label={isLoggedIn ? 'Logout' : 'Login'}

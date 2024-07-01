@@ -10,6 +10,7 @@ import {
 import { Seat, Team, User } from '../../types';
 import useModal from '../../hooks/useModal';
 import CustomModal from '../Modal';
+import { useState } from 'react';
 
 function Reservation({
   currentDate,
@@ -20,6 +21,7 @@ function Reservation({
 }) {
   const clickedDateString = dayjs(currentDate).format('YYYY-MM-DD');
   const { isOpen, message, openModal, closeModal } = useModal();
+  const isPassed = isBeforeToday(currentDate);
 
   const { list: seatList = [] } = useGetAllSeat() || {};
 
@@ -99,10 +101,25 @@ function Reservation({
       reservedAt: clickedDateString,
     }) || {};
 
-  const { mutateAsync: createReservationMutate } = useCreateReservation();
-  const { mutate: cancelReservationMutate } = useCancelReservation();
+  const [selectedSeatId, setSelectedSeatId] = useState<number | null>(null);
+
+  const { mutateAsync: createReservationMutate, isPending: isPendingCreate } =
+    useCreateReservation({
+      onSuccess: () => {
+        setSelectedSeatId(null);
+      },
+    });
+
+  const { mutate: cancelReservationMutate, isPending: isPendingCancel } =
+    useCancelReservation({
+      onSuccess: () => {
+        setSelectedSeatId(null);
+      },
+    });
 
   const handleCreateReservation = async (seatId: number) => {
+    setSelectedSeatId(seatId);
+
     try {
       await createReservationMutate({ seatId, reservedAt: clickedDateString });
     } catch (error: any) {
@@ -116,8 +133,11 @@ function Reservation({
       }
     }
   };
-  const handleCancelReservation = (seatId: number) =>
+
+  const handleCancelReservation = (seatId: number) => {
+    setSelectedSeatId(seatId);
     cancelReservationMutate({ seatId, reservedAt: clickedDateString });
+  };
 
   const renderDesk = (deskNo: number, i: number) => {
     const seat = allSeatList && allSeatList.find((e) => e.deskNo === deskNo);
@@ -125,18 +145,24 @@ function Reservation({
       reservationList && reservationList.find((v) => v.seat.deskNo === deskNo);
 
     return (
-      <Desk
-        currentDate={clickedDateString}
-        seat={seat}
-        deskNo={deskNo}
-        reservation={reservation}
-        myself={myself}
-        createReservation={seat ? handleCreateReservation : () => {}}
-        cancelReservation={seat ? handleCancelReservation : () => {}}
-        key={i}
-      />
+      <>
+        <Desk
+          currentDate={clickedDateString}
+          seat={seat}
+          deskNo={deskNo}
+          reservation={reservation}
+          myself={myself}
+          isPassed={isPassed}
+          createReservation={seat ? handleCreateReservation : () => {}}
+          cancelReservation={seat ? handleCancelReservation : () => {}}
+          key={i}
+          isPendingCreate={isPendingCreate && selectedSeatId === seat?.id}
+          isPendingCancel={isPendingCancel && selectedSeatId === seat?.id}
+        />
+      </>
     );
   };
+
   return (
     <Styled.Container>
       <ul className="seat-list">
@@ -154,6 +180,17 @@ function Reservation({
       </CustomModal>
     </Styled.Container>
   );
+}
+
+/**
+ * 오늘 날짜보다 이전 날짜인지 확인
+ * @param date 날짜
+ * @returns
+ */
+function isBeforeToday(date: Date) {
+  const today = dayjs().startOf('day');
+  const inputDate = dayjs(date).startOf('day');
+  return inputDate.isBefore(today);
 }
 
 export default Reservation;

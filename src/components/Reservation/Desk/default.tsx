@@ -1,48 +1,60 @@
 import Styled from './index.styles';
 import { Item } from '../../../types';
+import Loading from '../../Loading';
 
 function Default({
   deskNo,
   isHovering,
+  isPassed,
   handleMouseOver,
   handleMouseOut,
   onReserveButtonClick,
   items = [],
+  isPendingCreate,
 }: {
   deskNo: number;
   isHovering: boolean;
+  isPassed: boolean;
   handleMouseOver: () => void;
   handleMouseOut: () => void;
   items?: Item[];
   onReserveButtonClick: () => void;
+  isPendingCreate: boolean;
 }) {
+  const hoverActive = isHovering && !isPassed;
   return (
     <Styled.Container
       className="default"
-      $isHovering={isHovering}
+      $isHovering={hoverActive}
       onMouseOver={handleMouseOver}
       onMouseOut={handleMouseOut}
-      onClick={onReserveButtonClick}
+      onClick={hoverActive ? onReserveButtonClick : () => {}}
     >
-      {isHovering && (
+      {isPendingCreate ? (
+        <Loading />
+      ) : (
         <>
-          <p className="text">자리 예약하기</p>
+          {hoverActive && (
+            <>
+              <p className="text">자리 예약하기</p>
 
-          <Styled.ToolTip>
-            <img src="/info_icon.svg" alt="info" />
+              <Styled.ToolTip>
+                <img src="/info_icon.svg" alt="info" />
 
-            <div className="tooltiptext">
-              {items.length
-                ? items.map((item, index) => (
-                    <p key={index}>- {convertItems(item)}</p>
-                  ))
-                : 'No Item'}
-            </div>
-          </Styled.ToolTip>
+                <div className="tooltiptext">
+                  {items.length
+                    ? items.map((item, index) => (
+                        <p key={index}>- {convertItems(item)}</p>
+                      ))
+                    : 'No Item'}
+                </div>
+              </Styled.ToolTip>
+            </>
+          )}
+
+          {!hoverActive && <p className="desk-no">{deskNo}</p>}
         </>
       )}
-
-      {!isHovering && <p className="desk-no">{deskNo}</p>}
     </Styled.Container>
   );
 }
