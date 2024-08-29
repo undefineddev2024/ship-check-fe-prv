@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import { media } from '../../styles/media';
 
 const Container = styled.div`
-  background-color: #f4f4f4;
   padding: 40px 40px 80px;
   min-height: 100%;
 
@@ -14,7 +13,7 @@ const Container = styled.div`
 const MainPageContainer = styled.div`
   margin: 0 auto;
   width: 1280px;
-  gap: 20px;
+  gap: 30px;
 
   display: flex;
   flex-direction: column;
@@ -27,41 +26,33 @@ const MainPageContainer = styled.div`
 `;
 
 const ContentHeader = styled.div`
+  width: 100%;
   display: flex;
-
   flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 24px 16px;
-  gap: 16px;
-
-  background-color: #ffffff;
-  border-radius: 24px;
+  justify-content: space-between;
 
   ${media.mobile`
-    padding: 20px;
-    border-radius: 12px;
-  `};
+  justify-content: center;
+   `};
 `;
 
-const ContentBody = styled.div`
+const HeaderLeft = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background-color: #ffffff;
+  gap: 20px;
 
-  border-radius: 24px;
-  padding: 60px;
-
+  height: 100%;
   ${media.mobile`
-   padding: 20px 10px;
-   border-radius: 12px;
-  `};
+      display: none;
+   `};
 `;
+
+const HeaderRight = styled.div``;
 
 export default {
   Container,
   MainPageContainer,
   ContentHeader,
-  ContentBody,
+  HeaderLeft,
+  HeaderRight,
 };

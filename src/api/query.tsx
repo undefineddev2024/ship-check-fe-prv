@@ -9,6 +9,8 @@ import {
   CancelReservationRequest,
   RetrieveReservationListRequest,
   RetrieveReservationListResponse,
+  GetJudgementsResponse,
+  GetRankingSummaryResponse,
 } from './interfaces';
 import useAppQuery from '../hooks/useAppQuery';
 import useAppMutation from '../hooks/useAppMutation';
@@ -94,6 +96,35 @@ function useRetrieveReservationList({
   });
 }
 
+function useGetJudgements({ enabled }: { enabled?: boolean }) {
+  return useAppQuery<GetJudgementsResponse>({
+    queryKey: ['getJudgements'],
+    requestOptions: {
+      method: 'GET',
+      path: `/reservation/judgements`,
+    },
+    enabled,
+  });
+}
+
+function useGetRankingSummary({
+  enabled,
+  reservedMonth,
+}: {
+  enabled?: boolean;
+  /** YYYY-MM */
+  reservedMonth: string;
+}) {
+  return useAppQuery<GetRankingSummaryResponse>({
+    queryKey: ['getRankingSummary', reservedMonth],
+    requestOptions: {
+      method: 'GET',
+      path: `/rank/${reservedMonth}`,
+    },
+    enabled,
+  });
+}
+
 export {
   useGetAllSeat,
   useGetUser,
@@ -102,4 +133,6 @@ export {
   useCreateReservation,
   useCancelReservation,
   useRetrieveReservationList,
+  useGetJudgements,
+  useGetRankingSummary,
 };

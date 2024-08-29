@@ -6,10 +6,20 @@ import Layout from '../../containers/Layout';
 import { useTokenAuth } from '../../hooks/useTokenAuth';
 import useWeekList from '../../hooks/useWeekList';
 import Styled from './index.styles';
-import { useGetUser, useRetrieveReservationList } from '../../api/query';
+import {
+  useGetJudgements,
+  useGetRankingSummary,
+  useGetUser,
+  useRetrieveReservationList,
+} from '../../api/query';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import SimpleSlider from '../../components/Slider';
+import Ranking from '../../components/Ranking';
+import ElmoJudgement from '../../components/ElmoJudgement';
+import useCheckIsMobile from '../../hooks/useCheckIsMobile';
+import MobileReservation from '../../components/MobileReservation';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -20,6 +30,8 @@ function MainPage() {
   const todayDate = new Date();
 
   const { isLoggedIn } = useTokenAuth();
+  const { isMobile } = useCheckIsMobile();
+
   const { data: myself } = useGetUser({
     enabled: !!isLoggedIn,
   });
@@ -28,9 +40,19 @@ function MainPage() {
     data: reservationListForDateRange,
     refetch: refetchReservationListForDateRange,
   } = useRetrieveReservationList({
-    startReservedAt: dayjs(baseDate).subtract(1, 'week').format('YYYY-MM-DD'),
-    endReservedAt: dayjs(baseDate).add(1, 'week').format('YYYY-MM-DD'),
+    startReservedAt: dayjs(baseDate).startOf('month').format('YYYY-MM-DD'),
+    endReservedAt: dayjs(baseDate).endOf('month').format('YYYY-MM-DD'),
     enabled: !!myself && isLoggedIn,
+  });
+
+  const { data: judgementsResponse, refetch: refetchJudgements } =
+    useGetJudgements({
+      enabled: isLoggedIn,
+    });
+
+  const { data: rankingSummaryResponse } = useGetRankingSummary({
+    reservedMonth: dayjs(clickedDate).format('YYYY-MM'),
+    enabled: isLoggedIn,
   });
 
   const reservedDateList = reservationListForDateRange?.list
@@ -42,28 +64,46 @@ function MainPage() {
       <Styled.Container>
         <Styled.MainPageContainer>
           <Styled.ContentHeader>
-            <Notice />
+            <Styled.HeaderLeft>
+              <Notice />
+              <SimpleSlider
+                contents={[
+                  <Ranking
+                    attendance={rankingSummaryResponse?.attendance}
+                    ghost={rankingSummaryResponse?.ghost}
+                    cancel={rankingSummaryResponse?.cancel}
+                  />,
+                  <ElmoJudgement
+                    nameList={judgementsResponse?.userNames || []}
+                  />,
+                ]}
+              />
+            </Styled.HeaderLeft>
+            <Styled.HeaderRight>
+              <Calendar
+                todayDate={todayDate}
+                clickedDate={clickedDate}
+                baseDate={baseDate}
+                reservedDateList={reservedDateList}
+                setBaseDate={setBaseDate}
+                dayNames={dayNames}
+                weekList={weekList}
+                onDateClick={(date: Date) => {
+                  setClickedDate(date);
+                  isLoggedIn && refetchReservationListForDateRange();
+                  isLoggedIn && refetchJudgements();
+                }}
+              />
+            </Styled.HeaderRight>
           </Styled.ContentHeader>
 
-          <Styled.ContentBody>
-            <Calendar
-              todayDate={todayDate}
-              clickedDate={clickedDate}
-              baseDate={baseDate}
-              reservedDateList={reservedDateList}
-              setBaseDate={setBaseDate}
-              dayNames={dayNames}
-              weekList={weekList}
-              onDateClick={(date: Date) => {
-                setClickedDate(date);
-                isLoggedIn && refetchReservationListForDateRange();
-              }}
-            />
-
-            {isLoggedIn && myself && (
+          {isLoggedIn &&
+            myself &&
+            (isMobile ? (
+              <MobileReservation currentDate={clickedDate} userInfo={myself} />
+            ) : (
               <Reservation currentDate={clickedDate} myself={myself} />
-            )}
-          </Styled.ContentBody>
+            ))}
         </Styled.MainPageContainer>
       </Styled.Container>
     </Layout>
